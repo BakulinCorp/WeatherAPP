@@ -76,7 +76,7 @@ func requestWeatehrForLocation() {
     }
     let long = currentLocation.coordinate.longitude
     let lat = currentLocation.coordinate.latitude
-    let url = "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(long)&exclude=hourly,daily&appid={86c62bbd6d83d8358e6f31d6932b22a7}"
+    let url = "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(long)&exclude=hourly,daily&appid=86c62bbd6d83d8358e6f31d6932b22a7"
     
     print("\(long) | \(lat)")
     
@@ -91,6 +91,7 @@ func requestWeatehrForLocation() {
         // Convert data to models/some object
 
         var json: WeatherResponse?
+        print(WeatherResponse.self)
         do {
             json = try JSONDecoder().decode(WeatherResponse.self, from: data)
         }
@@ -103,14 +104,14 @@ func requestWeatehrForLocation() {
         }
 
         print(result.current.dt)
-        
+
         let entries = result.daily.data
 
         self.models.append(contentsOf: entries)
 
         let currently = result.current
         self.currently = currently
-        
+
 
 
         self.hourlyModels = result.hourly.data
@@ -132,52 +133,54 @@ func requestWeatehrForLocation() {
 
 
 
-struct WeatherResponse: Decodable {
+struct WeatherResponse: Codable {
     let lat: Float
     let lon: Float
     let timezone: String
-    let timezoneoffset: Int
     let current: CurrentWeather
     let hourly: HourlyWeather
     let daily: DailyWeather
-    let offset: Float
-}
-
-struct CurrentWeather: Decodable {
-    let dt: Int
-    let sunrise: Int
-    let sunset: Int
-    let temp: Int
-    let feels_like: Int
-    let pressure: Int
-    let humidity: Int
-    let dew_point: Double
-    let uvi: Double
-    let clouds: Int
-    let visibility: Int
-    let wind_speed: Int
-    let wind_deg: Int
     
+}
+
+struct CurrentWeather: Codable {
+//    let current: Int
+    let dt: Int
+    let temp: Double
 
 }
 
-struct DailyWeather: Decodable {
+struct DailyWeather: Codable {
     let summary: String
     let icon: String
     let data: [DailyWeatherEntry]
 }
 
-struct DailyWeatherEntry: Decodable {
-   
+struct DailyWeatherEntry: Codable {
+
+       let dt: Int
+
+           let day: Double
+           let min: Double
+           let max: Double
+          
+         
 }
 
-struct HourlyWeather: Decodable {
+struct HourlyWeather: Codable {
     let summary: String
     let icon: String
     let data: [HourlyWeatherEntry]
 }
 
-struct HourlyWeatherEntry: Decodable {
+struct HourlyWeatherEntry: Codable {
    
+    let hourly: [Hourly]
 }
 
+struct Hourly: Codable {
+    
+         let dt: Int
+         let temp: Double
+           
+}
