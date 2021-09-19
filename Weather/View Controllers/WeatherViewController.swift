@@ -147,6 +147,7 @@ struct CurrentWeather: Codable {
 //    let current: Int
     let dt: Int
     let temp: Double
+//    let hourly: [HourlyWeather]
 
 }
 
@@ -175,7 +176,7 @@ struct HourlyWeather: Codable {
 
 struct HourlyWeatherEntry: Codable {
    
-    let hourly: [Hourly]
+    let hourlyArray: [Hourly]
 }
 
 struct Hourly: Codable {
