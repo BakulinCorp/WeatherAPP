@@ -13,10 +13,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @IBOutlet var table: UITableView!
     var models = [DailyWeatherEntry]()
-    var hourlyModels = [HourlyWeatherEntry]()
+    var hourlyModels = [HourlyWeather]()
     let locationManager = CLLocationManager()
     var currentLocation: CLLocation?
-    var currently: CurrentWeather?
+        var currently: CurrentWeather?
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -35,7 +35,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        
         
         table.register(HourlyTableViewCell.nib(), forCellReuseIdentifier: HourlyTableViewCell.identifier)
         table.register(WeatherCollectionViewCell.nib(), forCellReuseIdentifier: WeatherCollectionViewCell.identifier)
@@ -64,124 +64,107 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             currentLocation = locations.first
             locationManager.stopUpdatingLocation()
             requestWeatehrForLocation()
-          
+            
         }
     }
     
- 
-
-func requestWeatehrForLocation() {
-    guard let currentLocation = currentLocation else {
-        return
-    }
-    let long = currentLocation.coordinate.longitude
-    let lat = currentLocation.coordinate.latitude
-    let url = "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(long)&exclude=hourly,daily&appid=86c62bbd6d83d8358e6f31d6932b22a7"
     
-    print("\(long) | \(lat)")
     
-    URLSession.shared.dataTask(with: URL(string: url)!, completionHandler: { data, response, error in
+    func requestWeatehrForLocation() {
+        guard let currentLocation = currentLocation else {
+            return
+        }
+        let long = currentLocation.coordinate.longitude
+        let lat = currentLocation.coordinate.latitude
+        let url = "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(long)&exclude=minutely&appid=86c62bbd6d83d8358e6f31d6932b22a7"
         
-        // Validation
-        guard let data = data, error == nil else {
-            print("something went wrong")
-            return
-        }
-
-        // Convert data to models/some object
-
-        var json: WeatherResponse?
-        print(WeatherResponse.self)
-        do {
-            json = try JSONDecoder().decode(WeatherResponse.self, from: data)
-        }
-        catch {
-            print("error: \(error)")
-        }
-
-        guard let result = json else {
-            return
-        }
-
-        print(result.current.dt)
-
-        let entries = result.daily.data
-
-        self.models.append(contentsOf: entries)
-
-        let currently = result.current
-        self.currently = currently
-
-
-
-        self.hourlyModels = result.hourly.data
-
-        // Update user interface
-        DispatchQueue.main.async {
-            self.table.reloadData()
-
-//            self.table.tableHeaderView = self.createTableHeader()
-        }
-
-    }).resume()
-        }
+        print("\(long) | \(lat)")
+        
+        URLSession.shared.dataTask(with: URL(string: url)!, completionHandler: { data, response, error in
+            
+            // Validation
+            guard let data = data, error == nil else {
+                print("something went wrong")
+                return
+            }
+            
+            // Convert data to models/some object
+            
+            var json: WeatherResponse?
+            print(WeatherResponse.self)
+            do {
+                json = try JSONDecoder().decode(WeatherResponse.self, from: data)
+            }
+            catch {
+                print("error: \(error)")
+            }
+            
+            guard let result = json else {
+                return
+            }
+            
+            print(result.current.temp)
+            
+            let entries = result.current.temp
+            
+//            self.models.append(contentsOf: entries)
+            
+                    let currently = result.current
+                    self.currently = currently
+            
+            
+            
+            //        self.hourlyModels = result.hourly.data
+            
+            // Update user interface
+            DispatchQueue.main.async {
+                self.table.reloadData()
+                
+                //            self.table.tableHeaderView = self.createTableHeader()
+            }
+            
+        }).resume()
+    }
 }
-    
-    
+
+
 
 // MARK - 24min
-
-
 
 struct WeatherResponse: Codable {
     let lat: Float
     let lon: Float
     let timezone: String
     let current: CurrentWeather
-    let hourly: HourlyWeather
-    let daily: DailyWeather
-    
+//    let hourly: HourlyWeather
+//    let daily: DailyWeather
 }
 
 struct CurrentWeather: Codable {
-//    let current: Int
     let dt: Int
     let temp: Double
-//    let hourly: [HourlyWeather]
-
+    let hourly: [HourlyWeather]
+    let daily: [DailyWeather]
 }
 
 struct DailyWeather: Codable {
-    let summary: String
-    let icon: String
-    let data: [DailyWeatherEntry]
+    let dt: Int
+    let temp: DailyWeatherEntry
 }
 
 struct DailyWeatherEntry: Codable {
-
-       let dt: Int
-
-           let day: Double
-           let min: Double
-           let max: Double
-          
-         
+    let day: Double
+    let min: Double
+    let max: Double
 }
 
 struct HourlyWeather: Codable {
-    let summary: String
-    let icon: String
-    let data: [HourlyWeatherEntry]
-}
-
-struct HourlyWeatherEntry: Codable {
-   
-    let hourlyArray: [Hourly]
-}
-
-struct Hourly: Codable {
+    let dt: Int
+    let temp: Double
     
-         let dt: Int
-         let temp: Double
-           
 }
+
+//struct HourlyWeatherEntry: Codable {
+//    let dt: Int
+//    let temp: Double
+//}

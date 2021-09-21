@@ -28,6 +28,6 @@ class HourlyTableViewCell: UITableViewCell {
                      bundle: nil)
     }
     
-    var models = [HourlyWeatherEntry]()
+//    var models = [HourlyWeatherEntry]()
     
 }
