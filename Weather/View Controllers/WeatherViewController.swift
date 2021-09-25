@@ -7,16 +7,17 @@
 
 import UIKit
 import CoreLocation
-
+import Foundation
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, CLLocationManagerDelegate {
     
     
     @IBOutlet var table: UITableView!
-    var models = [DailyWeatherEntry]()
-    var hourlyModels = [HourlyWeather]()
+    var models = [Daily]()
+    var hourlyModels = [Current]()
+    
     let locationManager = CLLocationManager()
     var currentLocation: CLLocation?
-        var currently: CurrentWeather?
+    var currently: Current?
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -76,7 +77,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         let long = currentLocation.coordinate.longitude
         let lat = currentLocation.coordinate.latitude
-        let url = "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(long)&exclude=minutely&appid=86c62bbd6d83d8358e6f31d6932b22a7"
+        let url = "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(long)&appid=86c62bbd6d83d8358e6f31d6932b22a7"
         
         print("\(long) | \(lat)")
         
@@ -105,17 +106,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             
             print(result.current.temp)
             
-            let entries = result.current.temp
+            let entries = result.daily
             
-//            self.models.append(contentsOf: entries)
+            self.models.append(contentsOf: entries)
             
-                    let currently = result.current
-                    self.currently = currently
+            let currently = result.current
+            self.currently = currently
             
             
             
-            //        self.hourlyModels = result.hourly.data
-            
+            self.hourlyModels = result.hourly
             // Update user interface
             DispatchQueue.main.async {
                 self.table.reloadData()
@@ -131,40 +131,140 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
 // MARK - 24min
 
+// This file was generated from JSON Schema using quicktype, do not modify it directly.
+// To parse the JSON, add this file to your project and do:
+//
+//   let weatherResponse = try? newJSONDecoder().decode(WeatherResponse.self, from: jsonData)
+
+
+// MARK: - WeatherResponse
 struct WeatherResponse: Codable {
-    let lat: Float
-    let lon: Float
+    let lat, lon: Double
     let timezone: String
-    let current: CurrentWeather
-//    let hourly: HourlyWeather
-//    let daily: DailyWeather
-}
-
-struct CurrentWeather: Codable {
-    let dt: Int
-    let temp: Double
-    let hourly: [HourlyWeather]
-    let daily: [DailyWeather]
-}
-
-struct DailyWeather: Codable {
-    let dt: Int
-    let temp: DailyWeatherEntry
-}
-
-struct DailyWeatherEntry: Codable {
-    let day: Double
-    let min: Double
-    let max: Double
-}
-
-struct HourlyWeather: Codable {
-    let dt: Int
-    let temp: Double
+    let timezoneOffset: Int
+    let current: Current
+    let minutely: [Minutely]
+    let hourly: [Current]
+    let daily: [Daily]
     
+    enum CodingKeys: String, CodingKey {
+        case lat, lon, timezone
+        case timezoneOffset = "timezone_offset"
+        case current, minutely, hourly, daily
+    }
 }
 
-//struct HourlyWeatherEntry: Codable {
-//    let dt: Int
-//    let temp: Double
-//}
+// MARK: - Current
+struct Current: Codable {
+    let dt: Int
+    let sunrise, sunset: Int?
+    let temp: Double
+    let feelsLike: Double
+    let pressure, humidity: Int
+    let dewPoint, uvi: Double
+    let clouds, visibility: Int
+    let windSpeed: Double
+    let windDeg: Int
+    let windGust: Double
+    let weather: [Weather]
+    let rain: Rain?
+    let pop: Double?
+
+    enum CodingKeys: String, CodingKey {
+        case dt, sunrise, sunset, temp
+        case feelsLike = "feels_like"
+        case pressure, humidity
+        case dewPoint = "dew_point"
+        case uvi, clouds, visibility
+        case windSpeed = "wind_speed"
+        case windDeg = "wind_deg"
+        case windGust = "wind_gust"
+        case weather, rain, pop
+    }
+}
+
+// MARK: - Rain
+struct Rain: Codable {
+    let the1H: Double
+    
+    enum CodingKeys: String, CodingKey {
+        case the1H = "1h"
+    }
+}
+
+// MARK: - Weather
+struct Weather: Codable {
+    let id: Int
+    let main: Main
+    let weatherDescription: String
+    let icon: Icon
+    
+    enum CodingKeys: String, CodingKey {
+        case id, main
+        case weatherDescription = "description"
+        case icon
+    }
+}
+
+enum Icon: String, Codable {
+    case the02D = "02d"
+    case the03D = "03d"
+    case the04D = "04d"
+    case the04N = "04n"
+    case the09D = "09d"
+    case the10D = "10d"
+}
+
+enum Main: String, Codable {
+    case clouds = "Clouds"
+    case rain = "Rain"
+}
+
+// MARK: - Daily
+struct Daily: Codable {
+    let dt, sunrise, sunset, moonrise: Int
+    let moonset: Int
+    let moonPhase: Double
+    let temp: Temp
+    let feelsLike: FeelsLike
+    let pressure, humidity: Int
+    let dewPoint, windSpeed: Double
+    let windDeg: Int
+    let windGust: Double
+    let weather: [Weather]
+    let clouds: Int
+    let pop: Double
+    let rain: Double?
+    let uvi: Double
+    
+    enum CodingKeys: String, CodingKey {
+        case dt, sunrise, sunset, moonrise, moonset
+        case moonPhase = "moon_phase"
+        case temp
+        case feelsLike = "feels_like"
+        case pressure, humidity
+        case dewPoint = "dew_point"
+        case windSpeed = "wind_speed"
+        case windDeg = "wind_deg"
+        case windGust = "wind_gust"
+        case weather, clouds, pop, rain, uvi
+    }
+}
+
+// MARK: - FeelsLike
+struct FeelsLike: Codable {
+    let day, night, eve, morn: Double
+}
+
+// MARK: - Temp
+struct Temp: Codable {
+    let day, min, max, night: Double
+    let eve, morn: Double
+}
+
+// MARK: - Minutely
+struct Minutely: Codable {
+    let dt: Int
+    let precipitation: Double
+}
+
