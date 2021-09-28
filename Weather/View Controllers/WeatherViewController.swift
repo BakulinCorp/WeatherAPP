@@ -13,7 +13,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @IBOutlet var table: UITableView!
     var models = [Daily]()
-    var hourlyModels = [Current]()
+//    var hourlyModels = [Current]()
     
     let locationManager = CLLocationManager()
     var currentLocation: CLLocation?

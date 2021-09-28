@@ -36,18 +36,18 @@ class WeatherTableViewCell: UITableViewCell {
     func configure(with model: Daily) {
         self.lowTempLabel.text = "\(Int(model.temp.min))°"
         self.higyTempLabel.text = "\(Int(model.temp.max))°"
-        
-        self.dayLabel.text = getDayForDate(Date(timeIntervalSince1970: Double(model.dt)))
+        self.dayLabel.text = "\(Int(model.dt))"
+//        self.dayLabel.text = getDayForDate(Date(timeIntervalSince1970: Double(model.dt)))
         self.iconImageView.image = UIImage(named: "clear")
     }
     
-    func getDayForDate(_ date: Date?) -> String {
-        guard let inputDate = date else {
-            return ""
-        }
-    let formatter = DateFormatter()
-        formatter.dateFormat = "MMM"
-        return formatter.string(from: inputDate)
-}
+//    func getDayForDate(_ date: Date?) -> String {
+//        guard let inputDate = date else {
+//            return ""
+//        }
+//    let formatter = DateFormatter()
+//        formatter.dateFormat = "MMM"
+//        return formatter.string(from: inputDate)
+//}
 
 }
