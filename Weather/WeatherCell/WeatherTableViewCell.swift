@@ -1,13 +1,13 @@
 //
-//  HourlyTableViewCell.swift
+//  WeatherTableViewCell.swift
 //  Weather
 //
-//  Created by Максим Бакулин on 14.09.2021.
+//  Created by Максим Бакулин on 28.09.2021.
 //
 
 import UIKit
 
-class HourlyTableViewCell: UITableViewCell {
+class WeatherTableViewCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -17,17 +17,12 @@ class HourlyTableViewCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-      
+        // Configure the view for the selected state
     }
-    
-    
-    static let identifier = "HourlyTableViewCell"
+    static let identifier = "WeatherTableViewCell"
     
     static func nib() -> UINib {
-        return UINib(nibName: "HourlyTableViewCell",
+        return UINib(nibName: "WeatherTableViewCell",
                      bundle: nil)
     }
-    
-//    var models = [Current]()
-    
 }

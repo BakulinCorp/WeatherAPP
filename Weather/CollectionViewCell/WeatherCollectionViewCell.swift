@@ -6,21 +6,21 @@
 //
 
 import UIKit
-
-class WeatherCollectionViewCell: UICollectionViewCell {
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-
-    
-    static let identifier = "WeatherCollectionViewCell"
-    
-    static func nib() -> UINib {
-        return UINib(nibName: "WeatherCollectionViewCell",
-                     bundle: nil)
-    }
-    
-    
-}
+//
+//class WeatherCollectionViewCell: UICollectionViewCell {
+//
+//    override func awakeFromNib() {
+//        super.awakeFromNib()
+//        // Initialization code
+//    }
+//
+//
+//    static let identifier = "WeatherCollectionViewCell"
+//
+//    static func nib() -> UINib {
+//        return UINib(nibName: "WeatherCollectionViewCell",
+//                     bundle: nil)
+//    }
+//
+//
+//}

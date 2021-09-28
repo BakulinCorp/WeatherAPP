@@ -39,7 +39,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         
         table.register(HourlyTableViewCell.nib(), forCellReuseIdentifier: HourlyTableViewCell.identifier)
-        table.register(WeatherCollectionViewCell.nib(), forCellReuseIdentifier: WeatherCollectionViewCell.identifier)
+        table.register(WeatherTableViewCell.nib(), forCellReuseIdentifier: WeatherTableViewCell.identifier)
         
         table.delegate = self
         table.dataSource = self
@@ -77,7 +77,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         let long = currentLocation.coordinate.longitude
         let lat = currentLocation.coordinate.latitude
-        let url = "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(long)&appid=86c62bbd6d83d8358e6f31d6932b22a7"
+        let url = "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(long)&appid=86c62bbd6d83d8358e6f31d6932b22a7&units=metric"
         
         print("\(long) | \(lat)")
         
@@ -104,7 +104,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 return
             }
             
-//            print(result.current.temp)
+            print(result.current.temp)
             
             let entries = result.daily
             
@@ -136,7 +136,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 // MARK: - WeatherResponse
 
 
-import Foundation
 
 
 struct WeatherResponse: Codable {
