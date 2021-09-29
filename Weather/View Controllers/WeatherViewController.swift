@@ -13,34 +13,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @IBOutlet var table: UITableView!
     var models = [Daily]()
-//    var hourlyModels = [Current]()
+    //    var hourlyModels = [Current]()
     
     let locationManager = CLLocationManager()
     var currentLocation: CLLocation?
     var currently: Current?
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        2
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
-            return 1
-        }
-        return models.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.row == 0 {
-            return UITableViewCell()
-        }
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: WeatherTableViewCell.identifier, for: indexPath) as! WeatherTableViewCell
-        cell.configure(with: models[indexPath.row])
-        return cell
-    }
-    
-    
+
     
     
     override func viewDidLoad() {
@@ -53,7 +31,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         table.delegate = self
         table.dataSource = self
         
-        
+        table.backgroundColor = .systemBlue
+        view.backgroundColor = .systemBlue
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -101,7 +80,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             // Convert data to models/some object
             
             var json: WeatherResponse?
-//            print(WeatherResponse.self)
+            //            print(WeatherResponse.self)
             do {
                 json = try JSONDecoder().decode(WeatherResponse.self, from: data)
             }
@@ -113,7 +92,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 return
             }
             
-            print(result.current.temp)
+            //            print(result.current.temp)
             
             let entries = result.daily
             
@@ -124,23 +103,82 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             
             
             
-//            self.hourlyModels = result.hourly
+            //            self.hourlyModels = result.hourly
             
             // Update user interface
             DispatchQueue.main.async {
                 self.table.reloadData()
                 
-                //            self.table.tableHeaderView = self.createTableHeader()
+                self.table.tableHeaderView = self.createTableHeader()
             }
             
         }).resume()
     }
+    
+    func createTableHeader() -> UIView {
+        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height:  view.frame.size.width))
+        
+        headerView.backgroundColor = .systemBlue
+        
+        let locationLabel = UILabel(frame: CGRect(x: 10, y: 10, width: view.frame.size.width-20, height: headerView.frame.size.height/5))
+        let summaryLabel = UILabel(frame: CGRect(x: 10, y: 20+locationLabel.frame.size.height, width: view.frame.size.width-20, height: headerView.frame.size.height/5))
+        let tempLabel = UILabel(frame: CGRect(x: 10, y: 20+locationLabel.frame.size.height+summaryLabel.frame.size.height, width: view.frame.size.width-20, height: headerView.frame.size.height/2))
+        
+        
+        
+        headerView.addSubview(locationLabel)
+        headerView.addSubview(tempLabel)
+        headerView.addSubview(summaryLabel)
+        
+        tempLabel.textAlignment = .center
+        locationLabel.textAlignment = .center
+        summaryLabel.textAlignment = .center
+        
+        locationLabel.text = "Current Location"
+        
+        guard let Current = self.currently else {
+            return UIView()
+        }
+
+        
+        tempLabel.text = "\(Current.temp)°"
+        tempLabel.font = UIFont(name: "Helvetica-Bold", size: 32)
+        summaryLabel.text = "clear"
+        
+        
+        return headerView
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        2
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 0 {
+            return 1
+        }
+        return models.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.section == 0 {
+            return UITableViewCell()
+        }
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: WeatherTableViewCell.identifier, for: indexPath) as! WeatherTableViewCell
+        cell.configure(with: models[indexPath.row])
+//        cell.backgroundColor = .systemBlue
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100
+    }
 }
 
 
-
 // MARK - 24min
- 
+
 
 // MARK: - WeatherResponse
 
@@ -155,7 +193,7 @@ struct WeatherResponse: Codable {
     let minutely: [Minutely]
     let hourly: [Current]
     let daily: [Daily]
-
+    
     enum CodingKeys: String, CodingKey {
         case lat, lon, timezone
         case timezoneOffset
@@ -167,7 +205,8 @@ struct WeatherResponse: Codable {
 struct Current: Codable {
     let dt: Int
     let sunrise, sunset: Int?
-    let temp, feelsLike: Double?
+    let temp: Double
+    let feelsLike: Double?
     let pressure, humidity: Int
     let dewPoint, uvi: Double?
     let clouds, visibility: Int
@@ -177,7 +216,7 @@ struct Current: Codable {
     let weather: [Weather]
     let rain: Rain?
     let pop: Double?
-
+    
     enum CodingKeys: String, CodingKey {
         case dt, sunrise, sunset, temp
         case feelsLike
@@ -194,7 +233,7 @@ struct Current: Codable {
 // MARK: - Rain
 struct Rain: Codable {
     let the1H: Double
-
+    
     enum CodingKeys: String, CodingKey {
         case the1H
     }
@@ -202,15 +241,16 @@ struct Rain: Codable {
 
 // MARK: - Weather
 struct Weather: Codable {
-    let id: Int
-//    let main: Main?
+    let id: Int?
+    //    let main: Main?
     let weatherDescription: String?
-//    let icon: Icon?
-
+    //    let icon: Icon?
+    
     enum CodingKeys: String, CodingKey {
         case id
+        //        case main
         case weatherDescription
-//        case icon
+        //        case icon
     }
 }
 
@@ -244,7 +284,7 @@ struct Daily: Codable {
     let pop: Double
     let rain: Double?
     let uvi: Double
-
+    
     enum CodingKeys: String, CodingKey {
         case dt, sunrise, sunset, moonrise, moonset
         case moonPhase

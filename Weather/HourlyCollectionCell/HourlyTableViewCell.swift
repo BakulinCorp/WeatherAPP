@@ -27,7 +27,7 @@ class HourlyTableViewCell: UITableViewCell {
         return UINib(nibName: "HourlyTableViewCell",
                      bundle: nil)
     }
-    
+   
 //    var models = [Current]()
     
 }
