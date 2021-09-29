@@ -22,7 +22,7 @@ class WeatherCollectionViewCell: UICollectionViewCell {
     
     
     func configure(with model: Current) {
-        self.tempLabel.text = "\(model.temp)"
+        self.tempLabel.text = "\(Int(model.temp))"
         self.iconImageView.contentMode = .scaleAspectFit
         self.iconImageView.image = UIImage(named: "clear")
     }

@@ -14,6 +14,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet var table: UITableView!
     var models = [Daily]()
     var hourlyModels = [Current]()
+//    var weatherResponse = [WeatherResponse]()
     
     let locationManager = CLLocationManager()
     var currentLocation: CLLocation?
@@ -80,7 +81,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             // Convert data to models/some object
             
             var json: WeatherResponse?
-            //            print(WeatherResponse.self)
+          
             do {
                 json = try JSONDecoder().decode(WeatherResponse.self, from: data)
             }
@@ -92,7 +93,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 return
             }
             
-            //            print(result.current.temp)
+     
             
             let entries = result.daily
             
@@ -134,14 +135,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         locationLabel.textAlignment = .center
         summaryLabel.textAlignment = .center
         
-        locationLabel.text = "Current Location"
+//        locationLabel.text = "\(WeatherResponse.timezone)"
+        locationLabel.text = "Location Label"
+
         
         guard let Current = self.currently else {
             return UIView()
         }
+        //timezone
         
-        
-        tempLabel.text = "\(Current.temp)°"
+        tempLabel.text = "\(Int(Current.temp))°"
         tempLabel.font = UIFont(name: "Helvetica-Bold", size: 32)
         summaryLabel.text = "clear"
         
@@ -166,7 +169,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             cell.configure(with: hourlyModels)
             //        cell.backgroundColor = .systemBlue
             return cell
-            //            return UITableViewCell()
+            
        
         }
             let cell = tableView.dequeueReusableCell(withIdentifier: WeatherTableViewCell.identifier, for: indexPath) as! WeatherTableViewCell
