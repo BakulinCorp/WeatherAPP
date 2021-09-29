@@ -19,6 +19,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var currentLocation: CLLocation?
     var currently: Current?
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        2
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
